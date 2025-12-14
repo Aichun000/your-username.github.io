@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>光影幻境 | 姚继能の电影世界</title>
+    <meta name="description" content="姚继能的个人电影作品展示网站，包含《大哥大》《苦尽甘来遇见你》等影视作品介绍">
+    <meta name="author" content="姚继能 23170404035">
+    <meta name="keywords" content="电影,影视,姚继能,个人作品,前端开发">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* 现代化CSS变量系统 */
+        :root {
+            --rainbow-1: #FF3366;
+            --rainbow-2: #FF6B35;
+            --rainbow-3: #FFC107;
+            --rainbow-4: #4CD964;
+            --rainbow-5: #5AC8FA;
+            --rainbow-6: #5856D6;
+            --rainbow-7: #AF52DE;
+            --dark-bg: #0A0A0F;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --transition-speed: 0.4s;
+            --shadow-heavy: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --shadow-light: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background: radial-gradient(ellipse at top, #0A0A0F 0%, #1A1A2E 50%, #16213E 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            cursor: none;
+            position: relative;
+        }
+        
+        /* 加载动画 */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid transparent;
+            border-top: 4px solid var(--rainbow-1);
+            border-right: 4px solid var(--rainbow-3);
+            border-bottom: 4px solid var(--rainbow-5);
+            border-left: 4px solid var(--rainbow-7);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loader-text {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: 300;
+            background: linear-gradient(90deg, var(--rainbow-1), var(--rainbow-4), var(--rainbow-7));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 个人水印 */
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 1.2rem;
+            font-weight: 300;
+            z-index: 999;
+            pointer-events: none;
+            font-family: 'Orbitron', monospace;
+        }
+        
+        /* 鼠标拖尾 */
+        .cursor-trail {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+        }
+        
+        .trail-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(2px);
+            mix-blend-mode: screen;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* 3D视差背景 */
+        .parallax-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+        
+        .parallax-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .layer-1 {
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 51, 102, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(90, 200, 250, 0.1) 0%, transparent 50%);
+            transform: translateZ(-100px) scale(2);
+        }
+        
+        .layer-2 {
+            background-image: 
+                linear-gradient(rgba(255, 107, 53, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(76, 217, 100, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform: translateZ(-200px) scale(3);
+        }
+        
+        /* 导航栏 - 玻璃态 */
+        .glass-nav {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 0.8rem 2rem;
+            display: flex;
+            gap: 2.5rem;
+            z-index: 1000;
+            box-shadow: var(--shadow-heavy);
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--rainbow-1), var(--rainbow-7));
+            transition: width 0.3s ease;
+        }
+        
+        .nav-item:hover::after {
+            width: 100%;
+        }
+        
+        .nav-item.active {
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--rainbow-1), var(--rainbow-3), var(--rainbow-5), var(--rainbow-7));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 7rem 2rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 英雄区域 */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        .hero-content {
+            max-width: 1000px;
+        }
+        
+        .hero-title {
+            font-size: clamp(3.5rem, 8vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .hero-title span {
+            display: block;
+            background: linear-gradient(90deg, 
+                var(--rainbow-1), 
+                var(--rainbow-2), 
+                var(--rainbow-3), 
+                var(--rainbow-4), 
+                var(--rainbow-5), 
+                var(--rainbow-6), 
+                var(--rainbow-7));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: textShine 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes textShine {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        
+        .hero-subtitle {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+        
+        .creator-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            margin: 2rem 0;
+        }
+        
+        .badge-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--rainbow-1), var(--rainbow-7));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .badge-info {
+            text-align: left;
+        }
+        
+        .badge-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--rainbow-1), var(--rainbow-4));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .badge-id {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* 电影网格 - 高级卡片 */
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin: 5rem 0;
+        }
+        
+        .movie-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        
+        .movie-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 25px;
+            padding: 2px;
+            background: linear-gradient(45deg, 
+                var(--rainbow-1), 
+                var(--rainbow-3), 
+                var(--rainbow-5), 
+                var(--rainbow-7));
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-20px) scale(1.02) rotateX(5deg);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 30px var(--rainbow-1),
+                0 0 60px var(--rainbow-3);
+        }
+        
+        .movie-card:hover::before {
+            opacity: 1;
+        }
+        
+        .movie-poster {
+            width: 100%;
+            height: 320px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        
+        .movie-card:hover .movie-poster img {
+            transform: scale(1.1) rotate(2deg);
+        }
+        
+        .movie-rating {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            color: var(--rainbow-3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .movie-info {
+            padding: 1.8rem;
+        }
+        
+        .movie-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .movie-year {
+            color: var(--rainbow-5);
+            font-size: 0.9rem;
+            background: rgba(90, 200, 250, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+        }
+        
+        .movie-genre {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .genre-tag {
+            background: linear-gradient(135deg, var(--rainbow-1), var(--rainbow-3));
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .movie-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.2rem;
+        }
+        
+        .movie-stats {
+            display: flex;
+            justify-content: space-between;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+        
+        /* 个人作品展示 */
+        .personal-works {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 3rem;
+            margin: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .personal-works::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                rgba(255, 51, 102, 0.1), 
+                rgba(76, 217, 100, 0.1), 
+                rgba(90, 200, 250, 0.1));
+            z-index: -1;
+        }
+        
+        .works-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(90deg, var(--rainbow-1), var(--rainbow-7));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+        }
+        
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .work-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .work-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--rainbow-1);
+            box-shadow: 0 10px 20px rgba(255, 51, 102, 0.2);
+        }
+        
+        .work-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--rainbow-1), var(--rainbow-3));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .work-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--rainbow-5);
+        }
+        
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 4rem 0 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--rainbow-1), 
+                var(--rainbow-4), 
+                var(--rainbow-7), 
+                transparent);
+        }
+        
+        .footer-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, 
+                var(--rainbow-1), 
+                var(--rainbow-3), 
+                var(--rainbow-5), 
+                var(--rainbow-7));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .tech-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .tech-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .tech-badge:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .glass-nav {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 1rem;
+                width: 90%;
+                border-radius: 20px;
+            }
+            
+            .container {
+                padding: 9rem 1rem 1rem;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .movies-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .personal-works {
+                padding: 2rem 1rem;
+            }
+            
+            .works-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .movie-poster {
+                height: 250px;
+            }
+            
+            .creator-badge {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .glass-nav {
+                top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">加载光影幻境...</div>
+    </div>
+    
+    <!-- 个人水印 -->
+    <div class="watermark">姚继能 23170404035</div>
+    
+    <!-- 鼠标拖尾容器 -->
+    <div class="cursor-trail" id="cursorTrail"></div>
+    
+    <!-- 3D视差背景 -->
+    <div class="parallax-bg">
+        <div class="parallax-layer layer-1"></div>
+        <div class="parallax-layer layer-2"></div>
+    </div>
+    
+    <!-- 玻璃态导航 -->
+    <nav class="glass-nav">
+        <a href="#home" class="nav-item active">首页</a>
+        <a href="#movies" class="nav-item">我的电影</a>
+        <a href="#works" class="nav-item">个人作品</a>
+        <a href="#contact" class="nav-item">联系我</a>
+    </nav>
+    
+    <div class="container">
+        <!-- 英雄区域 -->
+        <section class="hero-section" id="home">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span>光影幻境</span>
+                    <span>姚继能の观影世界</span>
+                </h1>
+                <p class="hero-subtitle">
+                    用代码编织光影，用创意讲述故事。探索电影艺术与现代Web技术的完美融合。
+                </p>
+                
+                <div class="creator-badge">
+                    <div class="badge-avatar">YJN</div>
+                    <div class="badge-info">
+                        <div class="badge-name">姚继能</div>
+                        <div class="badge-id">学号: 23170404035</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 电影网格 -->
+        <section id="movies">
+            <div class="movies-grid">
+                <!-- 电影卡片1 - 大哥大 -->
+                <div class="movie-card" data-movie="大哥大">
+                    <div class="movie-poster">
+                        <!-- 修改图片位置1 -->
+                        <img src="1.png" alt="大哥大电影海报" loading="lazy">
+                        <div class="movie-rating">
+                            <i class="fas fa-star"></i>
+                            <span>9.2</span>
+                        </div>
+                    </div>
+                    <div class="movie-info">
+                        <div class="movie-title">
+                            <span>大哥大</span>
+                            <span class="movie-year">2023</span>
+                        </div>
+                        <div class="movie-genre">
+                            <span class="genre-tag">动作</span>
+                            <span class="genre-tag">犯罪</span>
+                            <span class="genre-tag">剧情</span>
+                        </div>
+                        <p class="movie-description">
+                            一个关于权力、忠诚与背叛的黑帮史诗。在霓虹闪烁的都市丛林中，一个普通青年如何成长为一代枭雄的故事。
+                        </p>
+                        <div class="movie-stats">
+                            <span><i class="fas fa-clock"></i> 128分钟</span>
+                            <span><i class="fas fa-user"></i>无</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 电影卡片2 - 苦尽甘来遇见你 -->
+                <div class="movie-card" data-movie="苦尽甘来遇见你">
+                    <div class="movie-poster">
+                        <!-- 修改图片位置2 -->
+                        <img src="kjgl.png" alt="苦尽甘来遇见你电影海报" loading="lazy">
+                        <div class="movie-rating">
+                            <i class="fas fa-star"></i>
+                            <span>8.9</span>
+                        </div>
+                    </div>
+                    <div class="movie-info">
+                        <div class="movie-title">
+                            <span>苦尽甘来遇见你</span>
+                            <span class="movie-year">2023</span>
+                        </div>
+                        <div class="movie-genre">
+                            <span class="genre-tag">爱情</span>
+                            <span class="genre-tag">剧情</span>
+                            <span class="genre-tag">治愈</span>
+                        </div>
+                        <p class="movie-description">
+                            在人生低谷中相遇的两人，如何互相治愈、共同成长。一个关于坚持、希望和真爱的温暖故事。
+                        </p>
+                        <div class="movie-stats">
+                            <span><i class="fas fa-clock"></i> 116分钟</span>
+                            <span><i class="fas fa-user"></i> 无</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 电影卡片3 -->
+                <div class="movie-card" data-movie="星际穿越">
+                    <div class="movie-poster">
+                        <!-- 修改图片位置3 -->
+                        <img src="https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="星际穿越电影海报" loading="lazy">
+                        <div class="movie-rating">
+                            <i class="fas fa-star"></i>
+                            <span>9.3</span>
+                        </div>
+                    </div>
+                    <div class="movie-info">
+                        <div class="movie-title">
+                            <span>星际穿越</span>
+                            <span class="movie-year">2014</span>
+                        </div>
+                        <div class="movie-genre">
+                            <span class="genre-tag">科幻</span>
+                            <span class="genre-tag">冒险</span>
+                            <span class="genre-tag">剧情</span>
+                        </div>
+                        <p class="movie-description">
+                            为了拯救人类，一群探险家穿越虫洞，寻找适合人类居住的新家园。时间、爱与生存的终极考验。
+                        </p>
+                        <div class="movie-stats">
+                            <span><i class="fas fa-clock"></i> 169分钟</span>
+                            <span><i class="fas fa-user"></i> 克里斯托弗·诺兰</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 个人作品展示 -->
+        <section id="works">
+            <div class="personal-works">
+                <h2 class="works-title">姚继能 の 观影世界</h2>
+                <div class="works-grid">
+                    <div class="work-card">
+                        <div class="work-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <h3 class="work-title">大哥大</h3>
+                        <p>2023年执导作品，黑帮题材电影，探讨权力与人性的复杂关系。获得2023年金像奖最佳影片提名。</p>
+                    </div>
+                    
+                    <div class="work-card">
+                        <div class="work-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3 class="work-title">苦尽甘来遇见你</h3>
+                        <p>温暖治愈的爱情故事，讲述两个受伤灵魂如何互相拯救。2023年票房黑马，豆瓣评分8.9。</p>
+                    </div>
+                    
+                    <div class="work-card">
+                        <div class="work-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3 class="work-title">光影幻境网站</h3>
+                        <p>个人电影展示网站，采用前沿的Web技术，彩虹色主题与交互特效，展示电影艺术与数字技术的完美结合。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 页脚 -->
+        <footer id="contact">
+            <h2 class="footer-title">光影幻境 · 姚继能 23170404035</h2>
+            <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem;">
+                数字媒体艺术专业 | 观影爱好者 & 前端开发者
+            </p>
+            
+            <div class="tech-badges">
+                <a href="#" class="tech-badge">
+                    <i class="fab fa-html5"></i>
+                    <span>HTML5</span>
+                </a>
+                <a href="#" class="tech-badge">
+                    <i class="fab fa-css3-alt"></i>
+                    <span>CSS3</span>
+                </a>
+                <a href="#" class="tech-badge">
+                    <i class="fab fa-js"></i>
+                    <span>JavaScript</span>
+                </a>
+                <a href="#" class="tech-badge">
+                    <i class="fab fa-github"></i>
+                    <span>GitHub</span>
+                </a>
+            </div>
+            
+            <p style="margin-top: 2rem; color: rgba(255, 255, 255, 0.5); font-size: 0.9rem;">
+                本网站采用现代Web技术构建，支持响应式设计，已优化性能
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        // 页面加载动画
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+        
+        // 鼠标拖尾效果
+        const trailContainer = document.getElementById('cursorTrail');
+        const trailColors = [
+            '#FF3366', '#FF6B35', '#FFC107', '#4CD964', 
+            '#5AC8FA', '#5856D6', '#AF52DE'
+        ];
+        
+        document.addEventListener('mousemove', (e) => {
+            const trail = document.createElement('div');
+            trail.className = 'trail-dot';
+            
+            const color = trailColors[Math.floor(Math.random() * trailColors.length)];
+            const size = Math.random() * 10 + 5;
+            
+            trail.style.cssText = `
+                left: ${e.clientX}px;
+                top: ${e.clientY}px;
+                width: ${size}px;
+                height: ${size}px;
+                background: ${color};
+                box-shadow: 0 0 10px ${color};
+            `;
+            
+            trailContainer.appendChild(trail);
+            
+            // 淡入效果
+            setTimeout(() => {
+                trail.style.opacity = '0.8';
+            }, 10);
+            
+            // 淡出并移除
+            setTimeout(() => {
+                trail.style.opacity = '0';
+                setTimeout(() => {
+                    if (trail.parentNode) {
+                        trail.parentNode.removeChild(trail);
+                    }
+                }, 300);
+            }, 500);
+            
+            // 限制拖尾数量
+            const trails = trailContainer.querySelectorAll('.trail-dot');
+            if (trails.length > 30) {
+                trails[0].remove();
+            }
+        });
+        
+        // 视差滚动效果
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallaxLayers = document.querySelectorAll('.parallax-layer');
+            
+            parallaxLayers.forEach((layer, index) => {
+                const speed = 0.1 + (index * 0.05);
+                const yPos = -(scrolled * speed);
+                layer.style.transform = `translate3d(0, ${yPos}px, 0)`;
+            });
+        });
+        
+        // 卡片悬停效果
+        const movieCards = document.querySelectorAll('.movie-card');
+        
+        movieCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                
+                card.style.transform = `
+                    perspective(1000px)
+                    rotateX(${rotateX}deg)
+                    rotateY(${rotateY}deg)
+                    translateY(-20px)
+                    scale(1.02)
+                `;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+        
+        // 平滑滚动导航
+        document.querySelectorAll('.nav-item').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId.startsWith('#')) {
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                        
+                        // 更新活动导航项
+                        document.querySelectorAll('.nav-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                    }
+                }
+            });
+        });
+        
+        // 彩虹文本动画
+        const rainbowElements = document.querySelectorAll('.hero-title span');
+        let hue = 0;
+        
+        function animateRainbow() {
+            hue = (hue + 1) % 360;
+            
+            rainbowElements.forEach(element => {
+                element.style.filter = `hue-rotate(${hue}deg)`;
+            });
+            
+            requestAnimationFrame(animateRainbow);
+        }
+        
+        animateRainbow();
+        
+        // 电影卡片点击效果
+        movieCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const movieTitle = this.getAttribute('data-movie');
+                const isPersonalWork = movieTitle === '大哥大' || movieTitle === '苦尽甘来遇见你';
+                
+                // 创建模态框
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.9);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9999;
+                    backdrop-filter: blur(10px);
+                `;
+                
+                const modalContent = document.createElement('div');
+                modalContent.style.cssText = `
+                    background: rgba(20, 20, 30, 0.95);
+                    border-radius: 20px;
+                    padding: 3rem;
+                    max-width: 600px;
+                    width: 90%;
+                    border: 2px solid;
+                    border-image: linear-gradient(45deg, 
+                        var(--rainbow-1), 
+                        var(--rainbow-3), 
+                        var(--rainbow-5), 
+                        var(--rainbow-7)) 1;
+                    position: relative;
+                `;
+                
+                modalContent.innerHTML = `
+                    <h2 style="color: var(--rainbow-1); margin-bottom: 1rem;">${movieTitle}</h2>
+                    ${isPersonalWork ? 
+                        `<p style="color: var(--rainbow-3); margin-bottom: 1rem;">
+                            <i class="fas fa-star"></i> 姚继能个人观影记录
+                        </p>` : ''
+                    }
+                    <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 2rem;">
+                        这里是 ${movieTitle} 的详细信息页面。点击任意位置关闭。
+                    </p>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button onclick="alert('播放预告片功能')" style="
+                            background: linear-gradient(45deg, var(--rainbow-1), var(--rainbow-3));
+                            color: white;
+                            border: none;
+                            padding: 0.8rem 1.5rem;
+                            border-radius: 25px;
+                            cursor: pointer;
+                            font-weight: 600;
+                        ">播放预告片</button>
+                        <button onclick="alert('已收藏')" style="
+                            background: transparent;
+                            color: var(--rainbow-5);
+                            border: 2px solid var(--rainbow-5);
+                            padding: 0.8rem 1.5rem;
+                            border-radius: 25px;
+                            cursor: pointer;
+                            font-weight: 600;
+                        ">收藏电影</button>
+                    </div>
+                `;
+                
+                modal.appendChild(modalContent);
+                document.body.appendChild(modal);
+                
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        document.body.removeChild(modal);
+                    }
+                });
+            });
+        });
+        
+        // 滚动时更新活动导航
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-item');
+            
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        // 随机彩虹颜色变化
+        setInterval(() => {
+            const hue1 = Math.floor(Math.random() * 360);
+            const hue2 = (hue1 + 60) % 360;
+            const hue3 = (hue1 + 120) % 360;
+            
+            document.documentElement.style.setProperty('--rainbow-1', `hsl(${hue1}, 100%, 65%)`);
+            document.documentElement.style.setProperty('--rainbow-2', `hsl(${hue2}, 100%, 65%)`);
+            document.documentElement.style.setProperty('--rainbow-3', `hsl(${hue3}, 100%, 65%)`);
+        }, 5000);
+    </script>
+</body>
+</html>
